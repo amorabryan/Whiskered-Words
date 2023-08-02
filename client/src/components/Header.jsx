@@ -35,13 +35,14 @@ function NavList() {
       <div className="hidden pr-3 md:flex">
         {links.map((link, index) => {
           const isActive = link.to === location.pathname;
+
           return (
             <p
               key={index}
-              className={`cursor-pointer p-2 pr-5 text-stone-200 ${
+              className={`cursor-pointer p-2 pr-5 ${
                 isActive
                   ? 'text-orange-400 hover:text-orange-500'
-                  : 'hover:text-orange-500'
+                  : 'text-stone-200 hover:text-orange-500'
               }`}>
               <Link to={link.to} className="header-title">
                 {link.label}
@@ -86,10 +87,10 @@ function Hamburger() {
             return (
               <p
                 key={index}
-                className={`cursor-pointer p-2 text-stone-200 ${
+                className={`cursor-pointer p-2 ${
                   isActive
                     ? 'text-orange-400 hover:text-orange-500'
-                    : 'hover:text-orange-500'
+                    : 'text-stone-200 hover:text-orange-500'
                 }`}
                 onClick={closeDrawer}>
                 <Link to={link.to} className="header-title">
