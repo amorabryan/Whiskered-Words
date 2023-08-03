@@ -1,8 +1,35 @@
 import './Global.css';
 import { IoEnter } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 export function Register() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    try {
+      setIsLoading(true);
+      const formData = new FormData(event.target);
+      const userData = Object.fromEntries(formData.entries());
+      const req = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      };
+      const response = await fetch('/api/auth/sign-up', req);
+      if (!response.ok) {
+        throw new Error(`fetch Error ${response.status}`);
+      }
+      const user = await response.json();
+      console.log('Registered', user);
+    } catch (err) {
+      alert(`Error registering user: ${err}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <>
       <div className="register-container w-full">
@@ -10,7 +37,7 @@ export function Register() {
           <div className="col-one mb-8 mt-24 flex w-full flex-col items-center">
             <h2 className="brown-text text-bold text-4xl">REGISTER</h2>
             <br />
-            <form>
+            <form onSubmit={handleSubmit}>
               <label>
                 <input
                   required
@@ -36,9 +63,12 @@ export function Register() {
                     Login Here
                   </Link>
                 </div>
-                <div className="brown-background flex h-12 w-12 cursor-pointer items-center justify-center rounded-full">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="brown-background flex h-12 w-12 cursor-pointer items-center justify-center rounded-full">
                   <IoEnter color={'#E7DDD2'} size={36} />
-                </div>
+                </button>
               </div>
             </form>
           </div>

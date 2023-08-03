@@ -7,11 +7,12 @@ drop schema "public" cascade;
 create schema "public";
 
 CREATE TABLE "public"."Users" (
-  "userId"    serial      NOT NULL,
-  "username"  TEXT        NOT NULL UNIQUE,
-  "password"  TEXT        NOT NULL,
+  "userId"        serial      NOT NULL,
+  "username"      TEXT        NOT NULL UNIQUE,
+  "hashPassword"  TEXT        NOT NULL,
   "createdAt" timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT "Users_pk" PRIMARY KEY ("userId")
+  CONSTRAINT "Users_pk" PRIMARY KEY ("userId"),
+  UNIQUE ("username")
 ) WITH (
   OIDS=FALSE
 );
