@@ -10,7 +10,7 @@
 --      ('Build projects', false),
 --      ('Get a job', false);
 
-INSERT INTO "Users" ("username", "password")
+INSERT INTO "Users" ("username", "hashPassword")
 VALUES
     ('user1', 'pass123'),
     ('user2', 'secret321'),
