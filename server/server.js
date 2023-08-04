@@ -2,6 +2,7 @@ import 'dotenv/config';
 import pg from 'pg';
 import argon2 from 'argon2';
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import { ClientError, errorMiddleware } from './lib/index.js';
 
 const db = new pg.Pool({
@@ -37,6 +38,41 @@ app.post('/api/auth/sign-up', async (req, res, next) => {
     const params = [username, hash];
     const result = await db.query(sql, params);
     res.status(201).json(result.rows[0]);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/api/auth/sign-in', async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      throw new ClientError(401, 'invalid login');
+    }
+
+    const sql = `
+    select "userId",
+           "hashPassword"
+    from "Users"
+    where "username" = $1
+    `;
+    const params = [username];
+    const result = await db.query(sql, params);
+    const [user] = result.rows;
+    if (!user) {
+      throw new ClientError(401, 'Invalid login');
+    }
+    const { userId, hashPassword } = user;
+    const matchedPasswords = await argon2.verify(hashPassword, password);
+
+    if (!matchedPasswords) {
+      throw new ClientError(401, 'Invalid login');
+    }
+
+    const payload = { userId, username };
+    const token = jwt.sign(payload, process.env.TOKEN_SECRET);
+
+    res.status(200).json({ token, user: payload });
   } catch (err) {
     next(err);
   }
