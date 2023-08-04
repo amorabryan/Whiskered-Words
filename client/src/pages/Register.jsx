@@ -1,10 +1,21 @@
 import './Global.css';
 import { IoEnter } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useContext } from 'react';
+import AppContext from '../components/AppContext';
 
 export function Register() {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useContext(AppContext);
+
+  useEffect(() => {
+    if (user) navigate('/');
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [user, navigate]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -22,6 +33,7 @@ export function Register() {
         throw new Error(`fetch Error ${response.status}`);
       }
       const user = await response.json();
+      navigate('/login');
       console.log('Registered', user);
     } catch (err) {
       alert(`Error registering user: ${err}`);

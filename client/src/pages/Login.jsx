@@ -1,8 +1,48 @@
 import './Global.css';
 import { IoEnter } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useContext } from 'react';
+import AppContext from '../components/AppContext';
 
 export function Login() {
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { user, handleLogin } = useContext(AppContext);
+
+  useEffect(() => {
+    if (user) navigate('/');
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [user, navigate]);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    try {
+      setIsLoading(true);
+      const formData = new FormData(event.target);
+      const userData = Object.fromEntries(formData.entries());
+      const req = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      };
+      const response = await fetch('/api/auth/sign-in', req);
+      if (!response.ok) {
+        throw new Error(`fetch Error ${response.status}`);
+      }
+      const result = await response.json();
+      handleLogin(result);
+      navigate('/');
+      console.log('Signed In', result.user, '; received token:', result.token);
+    } catch (err) {
+      alert(`Error signing in: ${err}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <>
       <div className="login-container w-full">
@@ -10,7 +50,7 @@ export function Login() {
           <div className="col-one mb-8 mt-24 flex w-full flex-col items-center">
             <h2 className="brown-text text-bold text-4xl">LOG IN</h2>
             <br />
-            <form>
+            <form onSubmit={handleSubmit}>
               <label>
                 <input
                   required
@@ -36,9 +76,12 @@ export function Login() {
                     Register Here
                   </Link>
                 </div>
-                <div className="brown-background flex h-12 w-12 cursor-pointer items-center justify-center rounded-full">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="brown-background flex h-12 w-12 cursor-pointer items-center justify-center rounded-full">
                   <IoEnter color={'#E7DDD2'} size={36} />
-                </div>
+                </button>
               </div>
             </form>
           </div>

@@ -1,16 +1,9 @@
 import { FaCat, FaBars } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import AppContext from './AppContext';
 
-const links = [
-  { to: '/', label: 'Home' },
-  { to: '/register', label: 'Register' },
-  { to: '/login', label: 'Login' },
-  { to: '/about', label: 'About' },
-  { to: '/contact', label: 'Contact' },
-];
-
-export function Header(props) {
+export function Header() {
   return (
     <>
       <div className="header-container fixed left-0 top-0 z-[100] flex w-full items-center justify-between bg-zinc-800 pb-2 pt-8">
@@ -29,27 +22,70 @@ export function Header(props) {
 
 function NavList() {
   const location = useLocation();
+  const { user, handleSignOut } = useContext(AppContext);
+
+  const activePage = 'text-orange-400 hover:text-orange-500';
+  const inactivePage = 'text-stone-200 hover:text-orange-500';
 
   return (
     <>
       <div className="hidden pr-3 md:flex">
-        {links.map((link, index) => {
-          const isActive = link.to === location.pathname;
+        <p
+          className={`cursor-pointer p-2 pr-5 ${
+            location.pathname === '/' ? activePage : inactivePage
+          }`}>
+          <Link to="/" className="header-title">
+            Home
+          </Link>
+        </p>
 
-          return (
-            <p
-              key={index}
-              className={`cursor-pointer p-2 pr-5 ${
-                isActive
-                  ? 'text-orange-400 hover:text-orange-500'
-                  : 'text-stone-200 hover:text-orange-500'
-              }`}>
-              <Link to={link.to} className="header-title">
-                {link.label}
-              </Link>
-            </p>
-          );
-        })}
+        <p
+          className={`cursor-pointer p-2 pr-5 ${
+            location.pathname === '/register' ? activePage : inactivePage
+          }`}>
+          {!user ? (
+            <Link to="/register" className="header-title">
+              Register
+            </Link>
+          ) : (
+            <Link to="/yourcats" className="header-title">
+              Your Cats
+            </Link>
+          )}
+        </p>
+
+        <p
+          className={`cursor-pointer p-2 pr-5 ${
+            location.pathname === '/login' ? activePage : inactivePage
+          }`}>
+          {!user ? (
+            <Link to="/login" className="header-title">
+              Sign In
+            </Link>
+          ) : (
+            <Link to="/" className="header-title" onClick={handleSignOut}>
+              Sign Out
+            </Link>
+          )}
+        </p>
+
+        <p
+          className={`cursor-pointer p-2 pr-5 ${
+            location.pathname === '/about' ? activePage : inactivePage
+          }`}>
+          <Link to="/about" className="header-title">
+            About
+          </Link>
+        </p>
+
+        <p
+          className={`cursor-pointer p-2 pr-5 ${
+            location.pathname === '/contact' ? activePage : inactivePage
+          }`}>
+          <Link to="/contact" className="header-title">
+            Contact
+          </Link>
+        </p>
       </div>
     </>
   );
@@ -58,6 +94,10 @@ function NavList() {
 function Hamburger() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user, handleSignOut } = useContext(AppContext);
+
+  const activePage = 'text-orange-400 hover:text-orange-500';
+  const inactivePage = 'text-stone-200 hover:text-orange-500';
 
   function toggleDrawer() {
     setIsOpen(!isOpen);
@@ -65,6 +105,11 @@ function Hamburger() {
 
   function closeDrawer() {
     setIsOpen(false);
+  }
+
+  function handleSignOutClick() {
+    closeDrawer();
+    handleSignOut();
   }
 
   return (
@@ -82,23 +127,70 @@ function Hamburger() {
             isOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
           style={{ zIndex: 100 }}>
-          {links.map((link, index) => {
-            const isActive = link.to === location.pathname;
-            return (
-              <p
-                key={index}
-                className={`cursor-pointer p-2 ${
-                  isActive
-                    ? 'text-orange-400 hover:text-orange-500'
-                    : 'text-stone-200 hover:text-orange-500'
-                }`}
-                onClick={closeDrawer}>
-                <Link to={link.to} className="header-title">
-                  {link.label}
-                </Link>
-              </p>
-            );
-          })}
+          <p
+            onClick={closeDrawer}
+            className={`cursor-pointer p-2 pr-5 ${
+              location.pathname === '/' ? activePage : inactivePage
+            }`}>
+            <Link to="/" className="header-title">
+              Home
+            </Link>
+          </p>
+
+          <p
+            onClick={closeDrawer}
+            className={`cursor-pointer p-2 pr-5 ${
+              location.pathname === '/register' ? activePage : inactivePage
+            }`}>
+            {!user ? (
+              <Link to="/register" className="header-title">
+                Register
+              </Link>
+            ) : (
+              <Link to="/yourcats" className="header-title">
+                Your Cats
+              </Link>
+            )}
+          </p>
+
+          <p
+            onClick={closeDrawer}
+            className={`cursor-pointer p-2 pr-5 ${
+              location.pathname === '/login' ? activePage : inactivePage
+            }`}>
+            {!user ? (
+              <Link to="/login" className="header-title">
+                Sign In
+              </Link>
+            ) : (
+              <Link
+                to="/"
+                className="header-title"
+                onClick={handleSignOutClick}>
+                Sign Out
+              </Link>
+            )}
+          </p>
+
+          <p
+            onClick={closeDrawer}
+            className={`cursor-pointer p-2 pr-5 ${
+              location.pathname === '/about' ? activePage : inactivePage
+            }`}>
+            <Link to="/about" className="header-title">
+              About
+            </Link>
+          </p>
+
+          <p
+            onClick={closeDrawer}
+            className={`cursor-pointer p-2 pr-5 ${
+              location.pathname === '/contact' ? activePage : inactivePage
+            }`}>
+            <Link to="/contact" className="header-title">
+              Contact
+            </Link>
+          </p>
         </div>
         {!isOpen && (
           <div
