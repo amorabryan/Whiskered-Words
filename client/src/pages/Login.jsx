@@ -29,12 +29,11 @@ export function Login() {
         body: JSON.stringify(userData),
       };
       const response = await fetch('/api/auth/sign-in', req);
-      if (!response.ok) {
-        throw new Error(`fetch Error ${response.status}`);
-      }
       const result = await response.json();
+      if (!response.ok) {
+        throw new Error(`fetch Error ${response.status}, ${result.error}`);
+      }
       handleLogin(result);
-      navigate('/');
       console.log('Signed In', result.user, '; received token:', result.token);
     } catch (err) {
       alert(`Error signing in: ${err}`);

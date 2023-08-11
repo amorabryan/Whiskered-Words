@@ -41,7 +41,10 @@ function NavList() {
 
         <p
           className={`cursor-pointer p-2 pr-5 ${
-            location.pathname === '/register' ? activePage : inactivePage
+            location.pathname === '/register' ||
+            location.pathname === '/yourcats'
+              ? activePage
+              : inactivePage
           }`}>
           {!user ? (
             <Link to="/register" className="header-title">
@@ -140,7 +143,10 @@ function Hamburger() {
           <p
             onClick={closeDrawer}
             className={`cursor-pointer p-2 pr-5 ${
-              location.pathname === '/register' ? activePage : inactivePage
+              location.pathname === '/register' ||
+              location.pathname === '/yourcats'
+                ? activePage
+                : inactivePage
             }`}>
             {!user ? (
               <Link to="/register" className="header-title">

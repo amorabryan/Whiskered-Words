@@ -3,7 +3,7 @@ import pg from 'pg';
 import argon2 from 'argon2';
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { ClientError, errorMiddleware } from './lib/index.js';
+import { ClientError, errorMiddleware, authMiddleware } from './lib/index.js';
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -73,6 +73,115 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
     const token = jwt.sign(payload, process.env.TOKEN_SECRET);
 
     res.status(200).json({ token, user: payload });
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/api/cats/', authMiddleware, async (req, res, next) => {
+  try {
+    const { userId } = req.user;
+    const sql = `
+      select * from "Cats"
+        where "userId" = $1
+        order by "catId" desc;
+    `;
+    const params = [userId];
+    const result = await db.query(sql, params);
+    res.status(200).json(result.rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/api/cats', authMiddleware, async (req, res, next) => {
+  try {
+    const { userId } = req.user;
+    const { name, gender, ageYr, ageMo, breed, photoUrl } = req.body;
+    if (!name || !gender || !ageYr || !ageMo || !breed || !photoUrl) {
+      throw new ClientError(
+        400,
+        'name, gender, age, breed and photoUrl are required fields'
+      );
+    }
+    if (isNaN(ageMo) || ageMo < 0 || ageMo > 11) {
+      throw new ClientError(400, 'Months must be a number between 0 and 11.');
+    }
+    if (isNaN(ageYr) || ageYr < 0 || ageYr > 25) {
+      throw new ClientError(400, 'Years must be a number between 0 and 25.');
+    }
+    const sql = `
+      insert into "Cats" ("name", "gender", "ageYr", "ageMo", "photoUrl", "breed", "userId")
+        values ($1, $2, $3, $4, $5, $6, $7)
+        returning *;
+    `;
+    const params = [name, gender, ageYr, ageMo, photoUrl, breed, userId];
+    const result = await db.query(sql, params);
+    const [entry] = result.rows;
+    res.status(201).json(entry);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/api/cats/:catId', async (req, res, next) => {
+  try {
+    const catId = Number(req.params.catId);
+    const { name, gender, age, breed, photoUrl } = req.body;
+    if (
+      !Number.isInteger(catId) ||
+      !name ||
+      !gender ||
+      !age ||
+      !breed ||
+      !photoUrl
+    ) {
+      throw new ClientError(
+        400,
+        'name, gender, age, breed and photoUrl are required fields'
+      );
+    }
+    const sql = `
+      update "entries"
+        set "name" = $1,
+            "gender" = $2,
+            "ageYr" = $3,
+            "ageMo" = $4
+            "photoUrl" = $5,
+            "breed" = $6
+        where "catId" = $7 and "userId" = $8
+        returning *;
+    `;
+    const params = [name, gender, age, breed, photoUrl, catId, req.user.userId];
+    const result = await db.query(sql, params);
+    const [entry] = result.rows;
+    if (!entry) {
+      throw new ClientError(404, `Cat with id ${catId} not found`);
+    }
+    res.status(201).json(entry);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.delete('/api/cats/:catId', async (req, res, next) => {
+  try {
+    const catId = Number(req.params.catId);
+    if (!Number.isInteger(catId)) {
+      throw new ClientError(400, 'catId must be an integer');
+    }
+    const sql = `
+      delete from "Cats"
+        where "catId" = $1 and "userId" = $2
+        returning *;
+    `;
+    const params = [catId, req.user.userId];
+    const result = await db.query(sql, params);
+    const [deleted] = result.rows;
+    if (!deleted) {
+      throw new ClientError(404, `Cat with id ${catId} not found`);
+    }
+    res.sendStatus(204);
   } catch (err) {
     next(err);
   }

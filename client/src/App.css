@@ -1,3 +1,4 @@
-.page-container {
-  background-color: #e7ddd2;
+.form-image {
+  max-height: 12rem;
+  aspect-ratio: auto;
 }

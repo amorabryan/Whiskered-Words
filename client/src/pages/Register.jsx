@@ -29,10 +29,10 @@ export function Register() {
         body: JSON.stringify(userData),
       };
       const response = await fetch('/api/auth/sign-up', req);
+      const result = await response.json();
       if (!response.ok) {
-        throw new Error(`fetch Error ${response.status}`);
+        throw new Error(`fetch Error ${response.status}, ${result.error}`);
       }
-      const user = await response.json();
       navigate('/login');
       console.log('Registered', user);
     } catch (err) {

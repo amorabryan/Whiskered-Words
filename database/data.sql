@@ -17,12 +17,12 @@ VALUES
     ('user3', '123456');
 
 
-INSERT INTO "Cats" ("name", "gender", "age", "userId", "photoUrl", "breed")
+INSERT INTO "Cats" ("name", "gender", "ageYr", "ageMo", "userId", "photoUrl", "breed")
 VALUES
-    ('Whiskers', 'Male', '2', 1, 'https://nationaltoday.com/wp-content/uploads/2019/04/national-siamese-cat-day.jpg', 'Siamese'),
-    ('Bella', 'Female', '1', 2, 'https://cats.com/wp-content/uploads/2020/10/Persian-cat-compressed-768x384.jpg', 'Persian'),
-    ('Oliver', 'Male', '3', 1, 'https://cats.com/wp-content/uploads/2020/10/tabby-maine-coon.jpg', 'Maine Coon'),
-    ('Luna', 'Female', '2', 3, 'https://upload.wikimedia.org/wikipedia/commons/6/64/Ragdoll_from_Gatil_Ragbelas.jpg', 'Ragdoll');
+    ('Whiskers', 'Male', 2, 1, 1, 'https://nationaltoday.com/wp-content/uploads/2019/04/national-siamese-cat-day.jpg', 'Siamese'),
+    ('Bella', 'Female', 1, 1, 2, 'https://cats.com/wp-content/uploads/2020/10/Persian-cat-compressed-768x384.jpg', 'Persian'),
+    ('Oliver', 'Male', 3, 6, 1, 'https://cats.com/wp-content/uploads/2020/10/tabby-maine-coon.jpg', 'Maine Coon'),
+    ('Luna', 'Female', 2, 3, 3, 'https://upload.wikimedia.org/wikipedia/commons/6/64/Ragdoll_from_Gatil_Ragbelas.jpg', 'Ragdoll');
 
 
 INSERT INTO "Whiskers" ("name", "catId", "photoUrl", "note")

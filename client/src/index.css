@@ -12,3 +12,7 @@
 body {
   margin: 0;
 }
+
+.page-container {
+  background-color: #e7ddd2;
+}
