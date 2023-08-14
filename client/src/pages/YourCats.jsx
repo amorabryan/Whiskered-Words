@@ -7,7 +7,7 @@ import { FaPencilAlt } from 'react-icons/fa';
 export function YourCats({ onCreate, onEdit }) {
   const navigate = useNavigate();
   const { user } = useContext(AppContext);
-  const { cats, isCatsLoading, catsError } = useContext(CatContext);
+  const { cats, isCatsLoading, catsError, setCatId } = useContext(CatContext);
 
   useEffect(() => {
     if (!user) {
@@ -40,7 +40,12 @@ export function YourCats({ onCreate, onEdit }) {
             <div className="flex w-full justify-center">
               <ul className="flex flex-col flex-wrap justify-center md:flex-row">
                 {cats.map((cat) => (
-                  <Cat key={cat.catId} cat={cat} onEdit={onEdit} />
+                  <Cat
+                    key={cat.catId}
+                    cat={cat}
+                    onEdit={onEdit}
+                    setCatId={setCatId}
+                  />
                 ))}
               </ul>
             </div>
@@ -53,9 +58,15 @@ export function YourCats({ onCreate, onEdit }) {
   );
 }
 
-function Cat({ cat }) {
+function Cat({ cat, setCatId }) {
   const navigate = useNavigate();
   const { name, photoUrl, catId } = cat;
+
+  const handleEditClick = () => {
+    setCatId(catId);
+    navigate(`/updatecatentry/${catId}`);
+  };
+
   return (
     <li className="flex justify-center px-4 pb-8">
       <div className="cat-profile flex">
@@ -72,7 +83,7 @@ function Cat({ cat }) {
         <div className="pl-5">
           <FaPencilAlt
             className="fa-solid fa-pencil"
-            onClick={() => navigate(`/updatecatentry/${catId}`)}
+            onClick={handleEditClick}
           />
         </div>
       </div>

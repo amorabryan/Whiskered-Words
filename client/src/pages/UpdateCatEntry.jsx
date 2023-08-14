@@ -1,20 +1,39 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import AppContext from '../components/AppContext';
 import { CatContext } from '../components/CatContext';
 import { useNavigate } from 'react-router-dom';
 
-export function CatEntry() {
+export function UpdateCatEntry() {
+  const {
+    cat,
+    handleUpdateCat,
+    isUpdatingCatsLoading,
+    updateCatError,
+    setUpdateCatError,
+    catId,
+  } = useContext(CatContext);
+  const [name, setName] = useState(cat?.name ?? '');
+  const [photoUrl, setPhotoUrl] = useState(cat?.photoUrl ?? '');
+  const [gender, setGender] = useState(cat?.gender ?? '');
+  const [ageYr, setAgeYr] = useState(cat?.ageYr ?? '');
+  const [ageMo, setAgeMo] = useState(cat?.ageMo ?? '');
+  const [breed, setBreed] = useState(cat?.breed ?? '');
   const { user } = useContext(AppContext);
-  const { handleCreateCat, isCatsLoading, addCatError, setAddCatError } =
-    useContext(CatContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) {
       navigate('/login');
+    } else if (cat) {
+      setName(cat.name);
+      setPhotoUrl(cat.photoUrl);
+      setGender(cat.gender);
+      setAgeYr(cat.ageYr);
+      setAgeMo(cat.ageMo);
+      setBreed(cat.breed);
     }
-    setAddCatError(null);
-  }, [user, navigate, setAddCatError]);
+    setUpdateCatError(null);
+  }, [user, navigate, setUpdateCatError, cat]);
 
   // async function handleDelete() {
   //   try {
@@ -28,21 +47,21 @@ export function CatEntry() {
   //   }
   // }
 
-  if (isCatsLoading) return <div>Loading...</div>;
+  if (isUpdatingCatsLoading) return <div>Loading...</div>;
 
   return (
     <div className="container mt-24">
       <div className="flex flex-wrap items-center justify-center">
         <div className="column-full flex">
-          <h1>Register Your Cat!</h1>
+          <h1>Update Your Cat!</h1>
         </div>
       </div>
-      <form onSubmit={handleCreateCat}>
+      <form onSubmit={(event) => handleUpdateCat(event, catId)}>
         <div className="mb-4 flex flex-wrap">
           <div className="w-full md:w-1/2">
             <img
               className="form-image mx-auto mb-2 block rounded-md"
-              src={'/images/placeholder-image-square.jpg'}
+              src={photoUrl || '/images/placeholder-image-square.jpg'}
               alt="cat"
             />
             <label className="mb-4 block">
@@ -52,6 +71,8 @@ export function CatEntry() {
                 className="input-b-color text-padding purple-outline input-height margin-bottom-2 width-100 block rounded"
                 type="text"
                 name="photoUrl"
+                value={photoUrl}
+                onChange={(e) => setPhotoUrl(e.target.value)}
               />
             </label>
           </div>
@@ -63,11 +84,17 @@ export function CatEntry() {
                 className="input-b-color text-padding purple-outline input-height margin-bottom-2 width-100 block rounded"
                 type="text"
                 name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </label>
             <label>
               Gender:
-              <select required name="gender">
+              <select
+                required
+                name="gender"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}>
                 <option value={'placeholder'}>Gender</option>
                 <option value={'male'}>Male</option>
                 <option value={'female'}>Female</option>
@@ -81,6 +108,8 @@ export function CatEntry() {
                   className="input-b-color text-padding purple-outline input-height margin-bottom-2 block w-1/6 rounded"
                   type="text"
                   name="ageYr"
+                  value={ageYr}
+                  onChange={(e) => setAgeYr(e.target.value)}
                 />
                 <label>Year(s)</label>
                 <input
@@ -88,9 +117,12 @@ export function CatEntry() {
                   className="input-b-color text-padding purple-outline input-height margin-bottom-2 block w-1/6 rounded"
                   type="text"
                   name="ageMo"
+                  value={ageMo}
+                  onChange={(e) => setAgeMo(e.target.value)}
                 />
                 <label>Month(s)</label>
-                {addCatError && <div> {addCatError.message} </div>}
+                <br />
+                {updateCatError && <div> {updateCatError.message} </div>}
               </div>
             </label>
           </div>
@@ -104,6 +136,8 @@ export function CatEntry() {
                 className="input-b-color text-padding purple-outline input-height margin-bottom-2 width-100 block rounded"
                 type="text"
                 name="breed"
+                value={breed}
+                onChange={(e) => setBreed(e.target.value)}
               />
             </label>
           </div>

@@ -10,6 +10,7 @@ import {
   Register,
   YourCats,
   CatEntry,
+  UpdateCatEntry,
 } from './pages';
 import AppContext from './components/AppContext';
 import { CatProvider } from './components/CatContext';
@@ -72,7 +73,10 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/yourcats" element={<YourCats />} />
               <Route path="/catentry" element={<CatEntry />} />
-              {/* <Route path='/updatecatentry/:catId' element={<UpdateCatEntry /> } /> */}
+              <Route
+                path="/updatecatentry/:catId"
+                element={<UpdateCatEntry />}
+              />
               <Route path="/*" element={<NotFound />} />
             </Routes>
           </div>

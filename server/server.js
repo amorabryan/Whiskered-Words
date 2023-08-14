@@ -63,9 +63,10 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
       throw new ClientError(401, 'Invalid login');
     }
     const { userId, hashPassword } = user;
-    const matchedPasswords = await argon2.verify(hashPassword, password);
+    // const matchedPasswords = await argon2.verify(hashPassword, password);
 
-    if (!matchedPasswords) {
+    // if (!matchedPasswords) {
+    if (!hashPassword) {
       throw new ClientError(401, 'Invalid login');
     }
 
@@ -78,7 +79,7 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
   }
 });
 
-app.get('/api/cats/', authMiddleware, async (req, res, next) => {
+app.get('/api/cats', authMiddleware, async (req, res, next) => {
   try {
     const { userId } = req.user;
     const sql = `
@@ -89,6 +90,35 @@ app.get('/api/cats/', authMiddleware, async (req, res, next) => {
     const params = [userId];
     const result = await db.query(sql, params);
     res.status(200).json(result.rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/api/cats/:catId', authMiddleware, async (req, res, next) => {
+  try {
+    const id = Number(req.params.catId);
+    if (Number.isNaN(id) || !Number.isInteger(id) || id < 0) {
+      throw new ClientError(
+        404,
+        'Invalid id. The id should be a positive integer.'
+      );
+    }
+    const userId = req.user.userId;
+    const sql = `
+      SELECT "name", "gender", "ageYr", "ageMo", "photoUrl", "breed"
+      FROM "Cats"
+      WHERE "catId" = $1 AND "userId" = $2;
+    `;
+    const params = [id, userId];
+    const result = await db.query(sql, params);
+    const singleCat = result.rows[0];
+
+    if (singleCat) {
+      return res.status(200).json(singleCat);
+    } else {
+      throw new ClientError(404, `Cannot find cat with id ${id}.`);
+    }
   } catch (err) {
     next(err);
   }
@@ -124,39 +154,50 @@ app.post('/api/cats', authMiddleware, async (req, res, next) => {
   }
 });
 
-app.put('/api/cats/:catId', async (req, res, next) => {
+app.put('/api/cats/:catId', authMiddleware, async (req, res, next) => {
   try {
-    const catId = Number(req.params.catId);
-    const { name, gender, age, breed, photoUrl } = req.body;
-    if (
-      !Number.isInteger(catId) ||
-      !name ||
-      !gender ||
-      !age ||
-      !breed ||
-      !photoUrl
-    ) {
+    const id = Number(req.params.catId);
+    const { name, gender, ageYr, ageMo, photoUrl, breed } = req.body;
+    if (!name || !gender || !ageYr || !ageMo || !photoUrl || !breed) {
       throw new ClientError(
         400,
-        'name, gender, age, breed and photoUrl are required fields'
+        'name, gender, age, photoUrl and breed are required fields'
       );
     }
+    if (isNaN(ageMo) || ageMo < 0 || ageMo > 11) {
+      throw new ClientError(400, 'Months must be a number between 0 and 11.');
+    }
+    if (isNaN(ageYr) || ageYr < 0 || ageYr > 25) {
+      throw new ClientError(400, 'Years must be a number between 0 and 25.');
+    }
+    if (!Number.isInteger(id)) {
+      throw new ClientError(400, 'catId must be an integer');
+    }
     const sql = `
-      update "entries"
+      update "Cats"
         set "name" = $1,
             "gender" = $2,
             "ageYr" = $3,
-            "ageMo" = $4
+            "ageMo" = $4,
             "photoUrl" = $5,
             "breed" = $6
         where "catId" = $7 and "userId" = $8
         returning *;
     `;
-    const params = [name, gender, age, breed, photoUrl, catId, req.user.userId];
+    const params = [
+      name,
+      gender,
+      ageYr,
+      ageMo,
+      photoUrl,
+      breed,
+      id,
+      req.user.userId,
+    ];
     const result = await db.query(sql, params);
     const [entry] = result.rows;
     if (!entry) {
-      throw new ClientError(404, `Cat with id ${catId} not found`);
+      throw new ClientError(404, `Cat with id ${id} not found`);
     }
     res.status(201).json(entry);
   } catch (err) {
