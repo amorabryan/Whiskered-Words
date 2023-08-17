@@ -205,7 +205,7 @@ app.put('/api/cats/:catId', authMiddleware, async (req, res, next) => {
   }
 });
 
-app.delete('/api/cats/:catId', async (req, res, next) => {
+app.delete('/api/cats/:catId', authMiddleware, async (req, res, next) => {
   try {
     const catId = Number(req.params.catId);
     if (!Number.isInteger(catId)) {

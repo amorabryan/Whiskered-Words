@@ -3,6 +3,7 @@ import AppContext from '../components/AppContext';
 import { CatContext } from '../components/CatContext';
 import { readCurrentCat } from '../components/data';
 import { useNavigate, useParams } from 'react-router-dom';
+import { IoEnter } from 'react-icons/io5';
 
 export function UpdateCatEntry() {
   const { catId } = useParams();
@@ -12,13 +13,13 @@ export function UpdateCatEntry() {
     updateCatError,
     setUpdateCatError,
   } = useContext(CatContext);
-  const [catError, setCatError] = useState();
-  const [name, setName] = useState();
-  const [photoUrl, setPhotoUrl] = useState();
-  const [gender, setGender] = useState();
-  const [ageYr, setAgeYr] = useState();
-  const [ageMo, setAgeMo] = useState();
-  const [breed, setBreed] = useState();
+  const [catError, setCatError] = useState('');
+  const [name, setName] = useState('');
+  const [photoUrl, setPhotoUrl] = useState('');
+  const [gender, setGender] = useState('');
+  const [ageYr, setAgeYr] = useState('');
+  const [ageMo, setAgeMo] = useState('');
+  const [breed, setBreed] = useState('');
   const { user, token } = useContext(AppContext);
   const { setIsUpdatingCatLoading } = useContext(CatContext);
   const navigate = useNavigate();
@@ -64,27 +65,16 @@ export function UpdateCatEntry() {
     catId,
   ]);
 
-  // async function handleDelete() {
-  //   try {
-  //     setIsLoading(true);
-  //     await removeCat(cat.catId);
-  //     onSubmit();
-  //   } catch (err) {
-  //     alert(`Error deleting cat: ${err}`);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }
-
   if (isUpdatingCatsLoading) return <div>Loading...</div>;
   if (catError)
     return (
       <div className="m-24">Error loading entries: {catError.message}</div>
     );
+
   return (
-    <div className="container mt-24">
-      <div className="flex flex-wrap items-center justify-center">
-        <div className="column-full flex">
+    <div className="container mx-auto mt-24">
+      <div className="mb-4 flex w-full flex-col items-center justify-center">
+        <div className="column-full brown-text text-bold flex text-2xl">
           <h1>Update Your Cat!</h1>
         </div>
       </div>
@@ -92,7 +82,7 @@ export function UpdateCatEntry() {
         <div className="mb-4 flex flex-wrap">
           <div className="w-full md:w-1/2">
             <img
-              className="form-image mx-auto mb-2 block rounded-md"
+              className="form-image mx-auto mb-2 block max-w-xs rounded-md shadow-lg"
               src={photoUrl || '/images/placeholder-image-square.jpg'}
               alt="cat"
             />
@@ -100,23 +90,23 @@ export function UpdateCatEntry() {
               Photo URL
               <input
                 required
-                className="input-b-color text-padding purple-outline input-height margin-bottom-2 width-100 block rounded"
+                className="mt-2 w-full rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
                 type="text"
                 name="photoUrl"
-                value={photoUrl}
+                value={photoUrl || ''}
                 onChange={(e) => setPhotoUrl(e.target.value)}
               />
             </label>
           </div>
           <div className="w-full md:w-1/2">
             <label className="mb-4 block">
-              Your Cat's Name:
+              Your Cat's Name
               <input
                 required
-                className="input-b-color text-padding purple-outline input-height margin-bottom-2 width-100 block rounded"
+                className="mt-2 w-full rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
                 type="text"
                 name="name"
-                value={name}
+                value={name || ''}
                 onChange={(e) => setName(e.target.value)}
               />
             </label>
@@ -124,8 +114,9 @@ export function UpdateCatEntry() {
               Gender:
               <select
                 required
+                className="mt-2 w-1/2 rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
                 name="gender"
-                value={gender}
+                value={gender || ''}
                 onChange={(e) => setGender(e.target.value)}>
                 <option value={'placeholder'}>Gender</option>
                 <option value={'male'}>Male</option>
@@ -134,25 +125,25 @@ export function UpdateCatEntry() {
             </label>
             <label className="mb-4 block">
               Age:
-              <div className="flex">
+              <div className="mt-2 flex">
                 <input
                   required
-                  className="input-b-color text-padding purple-outline input-height margin-bottom-2 block w-1/6 rounded"
+                  className="mr-2 w-10 rounded border border-gray-300 pl-2 focus:border-orange-500 focus:outline-none"
                   type="text"
                   name="ageYr"
-                  value={ageYr}
+                  value={ageYr || ''}
                   onChange={(e) => setAgeYr(e.target.value)}
                 />
-                <label>Year(s)</label>
+                <label className="mr-2">Year(s)</label>
                 <input
                   required
-                  className="input-b-color text-padding purple-outline input-height margin-bottom-2 block w-1/6 rounded"
+                  className="mr-2 w-10 rounded border border-gray-300 pl-2 focus:border-orange-500 focus:outline-none"
                   type="text"
                   name="ageMo"
-                  value={ageMo}
+                  value={ageMo || ''}
                   onChange={(e) => setAgeMo(e.target.value)}
                 />
-                <label>Month(s)</label>
+                <label className="mr-2">Month(s)</label>
                 <br />
                 {updateCatError && <div> {updateCatError.message} </div>}
               </div>
@@ -162,60 +153,42 @@ export function UpdateCatEntry() {
         <div className="mb-4 flex flex-wrap">
           <div className="column-full">
             <label className="mb-4 block">
-              Breed
+              Breed <br />
               <input
                 required
-                className="input-b-color text-padding purple-outline input-height margin-bottom-2 width-100 block rounded"
+                className="mt-2 w-1/2 rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
                 type="text"
                 name="breed"
-                value={breed}
+                value={breed || ''}
                 onChange={(e) => setBreed(e.target.value)}
               />
+              <div className="mt-2 flex flex-col text-center text-sm text-gray-600">
+                If you don't know your cat's breed, that's okay! Most cats are
+                mixed breed so select “Mixed/Unknown”. If entering in multiple
+                breeds, please use a comma ( , ) after each breed. Need help
+                spelling? Visit{' '}
+                <a
+                  href="https://www.purina.com/cats/cat-breeds"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-purple-700 hover:underline">
+                  https://www.purina.com/cats/cat-breeds
+                </a>{' '}
+                to see the breed names.
+              </div>
             </label>
           </div>
         </div>
         <div className="flex flex-wrap">
-          <div className="column-full flex justify-between">
-            {/* {cat && (
-              <button
-                disabled={isLoading}
-                className="delete-cat-button"
-                type="button"
-                onClick={() => setIsDeleting(true)}>
-                Delete Cat
-              </button>
-            )} */}
+          <div className="mt-6 w-full text-center">
             <button
-              className="text-padding purple-background white-text rounded"
-              type="submit">
-              SAVE
+              type="submit"
+              className="brown-background flex h-12 w-12 cursor-pointer items-center justify-center rounded-full">
+              <IoEnter color={'#E7DDD2'} size={36} />
             </button>
           </div>
         </div>
       </form>
-      {/* {isDeleting && (
-        <div
-          id="modalContainer"
-          className="modal-container flex justify-center align-center">
-          <div className="modal flex flex-wrap">
-            <div className="column-full flex justify-center">
-              <p>Are you sure you want to delete this cat?</p>
-            </div>
-            <div className="column-full flex justify-between">
-              <button
-                className="modal-button"
-                onClick={() => setIsDeleting(false)}>
-                Cancel
-              </button>
-              <button
-                className="modal-button red-background white-text"
-                onClick={handleDelete}>
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }

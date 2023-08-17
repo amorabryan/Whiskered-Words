@@ -1,13 +1,15 @@
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AppContext from '../components/AppContext';
 import { CatContext } from '../components/CatContext';
-import { FaPencilAlt } from 'react-icons/fa';
+import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
+import { DeleteCat } from '../components';
 
 export function YourCats({ onCreate }) {
   const navigate = useNavigate();
   const { user } = useContext(AppContext);
-  const { cats, isCatsLoading, catsError } = useContext(CatContext);
+  const { cats, isCatsLoading, catsError, handleDeleteCat } =
+    useContext(CatContext);
   useEffect(() => {
     if (!user) {
       navigate('/login');
@@ -40,7 +42,7 @@ export function YourCats({ onCreate }) {
               <ul className="flex flex-col flex-wrap justify-center md:flex-row">
                 {cats.map((cat) => (
                   <div key={cat.catId}>
-                    <Cat cat={cat} />
+                    <Cat cat={cat} onDelete={handleDeleteCat} />
                   </div>
                 ))}
               </ul>
@@ -54,11 +56,28 @@ export function YourCats({ onCreate }) {
   );
 }
 
-function Cat({ cat }) {
+function Cat({ cat, onDelete }) {
   const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const { name, photoUrl, catId } = cat;
+
   async function handleEditClick() {
     navigate(`/updatecatentry/${catId}`);
+  }
+
+  function handleDeleteClick() {
+    setIsDeleting(true);
+  }
+
+  async function handleConfirmDelete() {
+    try {
+      await onDelete(catId);
+    } catch (error) {
+      console.error('Error deleting cat:', error);
+    } finally {
+      setIsDeleting(false);
+    }
   }
 
   return (
@@ -75,9 +94,23 @@ function Cat({ cat }) {
           </h3>
         </div>
         <div className="pl-5">
-          <FaPencilAlt className="cursor-pointer" onClick={handleEditClick} />
+          <div className="mb-2">
+            <FaPencilAlt className="cursor-pointer" onClick={handleEditClick} />
+          </div>
+          <div className="mb-2">
+            <FaTrashAlt
+              className="cursor-pointer"
+              onClick={handleDeleteClick}
+            />
+          </div>
         </div>
       </div>
+      {isDeleting && (
+        <DeleteCat
+          onCancel={() => setIsDeleting(false)}
+          onConfirm={handleConfirmDelete}
+        />
+      )}
     </li>
   );
 }

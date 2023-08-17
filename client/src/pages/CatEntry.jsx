@@ -1,4 +1,5 @@
 import { useContext, useEffect } from 'react';
+import { IoEnter } from 'react-icons/io5';
 import AppContext from '../components/AppContext';
 import { CatContext } from '../components/CatContext';
 import { useNavigate } from 'react-router-dom';
@@ -16,24 +17,12 @@ export function CatEntry() {
     setAddCatError(null);
   }, [user, navigate, setAddCatError]);
 
-  // async function handleDelete() {
-  //   try {
-  //     setIsLoading(true);
-  //     await removeCat(cat.catId);
-  //     onSubmit();
-  //   } catch (err) {
-  //     alert(`Error deleting cat: ${err}`);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }
-
   if (isCatsLoading) return <div>Loading...</div>;
 
   return (
-    <div className="container mt-24">
-      <div className="flex flex-wrap items-center justify-center">
-        <div className="column-full flex">
+    <div className="container mx-auto mt-24">
+      <div className="mb-4 flex w-full flex-col items-center justify-center">
+        <div className="column-full brown-text text-bold flex text-2xl">
           <h1>Register Your Cat!</h1>
         </div>
       </div>
@@ -41,7 +30,7 @@ export function CatEntry() {
         <div className="mb-4 flex flex-wrap">
           <div className="w-full md:w-1/2">
             <img
-              className="form-image mx-auto mb-2 block rounded-md"
+              className="form-image mx-auto mb-2 block max-w-xs rounded-md shadow-lg"
               src={'/images/placeholder-image-square.jpg'}
               alt="cat"
             />
@@ -49,7 +38,7 @@ export function CatEntry() {
               Photo URL
               <input
                 required
-                className="input-b-color text-padding purple-outline input-height margin-bottom-2 width-100 block rounded"
+                className="mt-2 w-full rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
                 type="text"
                 name="photoUrl"
               />
@@ -60,32 +49,35 @@ export function CatEntry() {
               Your Cat's Name:
               <input
                 required
-                className="input-b-color text-padding purple-outline input-height margin-bottom-2 width-100 block rounded"
+                className="mt-2 w-full rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
                 type="text"
                 name="name"
               />
             </label>
             <label>
-              Gender:
-              <select required name="gender">
+              Gender: <br />
+              <select
+                required
+                className="mt-2 w-1/2 rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
+                name="gender">
                 <option value={'placeholder'}>Gender</option>
                 <option value={'male'}>Male</option>
                 <option value={'female'}>Female</option>
               </select>
             </label>
             <label className="mb-4 block">
-              Age:
+              Age: <br />
               <div className="flex">
                 <input
                   required
-                  className="input-b-color text-padding purple-outline input-height margin-bottom-2 block w-1/6 rounded"
+                  className="mr-2 w-10 rounded border border-gray-300 pl-2 focus:border-orange-500 focus:outline-none"
                   type="text"
                   name="ageYr"
                 />
                 <label>Year(s)</label>
                 <input
                   required
-                  className="input-b-color text-padding purple-outline input-height margin-bottom-2 block w-1/6 rounded"
+                  className="mr-2 w-10 rounded border border-gray-300 pl-2 focus:border-orange-500 focus:outline-none"
                   type="text"
                   name="ageMo"
                 />
@@ -98,58 +90,40 @@ export function CatEntry() {
         <div className="mb-4 flex flex-wrap">
           <div className="column-full">
             <label className="mb-4 block">
-              Breed
+              Breed <br />
               <input
                 required
-                className="input-b-color text-padding purple-outline input-height margin-bottom-2 width-100 block rounded"
+                className="mt-2 w-1/2 rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
                 type="text"
                 name="breed"
               />
+              <div className="mt-2 flex flex-col text-center text-sm text-gray-600">
+                If you don't know your cat's breed, that's okay! Most cats are
+                mixed breed so select “Mixed/Unknown”. If entering in multiple
+                breeds, please use a comma ( , ) after each breed. Need help
+                spelling? Visit{' '}
+                <a
+                  href="https://www.purina.com/cats/cat-breeds"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-purple-700 hover:underline">
+                  https://www.purina.com/cats/cat-breeds
+                </a>{' '}
+                to see the breed names.
+              </div>
             </label>
           </div>
         </div>
         <div className="flex flex-wrap">
           <div className="column-full flex justify-between">
-            {/* {cat && (
-              <button
-                disabled={isLoading}
-                className="delete-cat-button"
-                type="button"
-                onClick={() => setIsDeleting(true)}>
-                Delete Cat
-              </button>
-            )} */}
             <button
-              className="text-padding purple-background white-text rounded"
-              type="submit">
-              SAVE
+              type="submit"
+              className="brown-background flex h-12 w-12 cursor-pointer items-center justify-center rounded-full">
+              <IoEnter color={'#E7DDD2'} size={36} />
             </button>
           </div>
         </div>
       </form>
-      {/* {isDeleting && (
-        <div
-          id="modalContainer"
-          className="modal-container flex justify-center align-center">
-          <div className="modal flex flex-wrap">
-            <div className="column-full flex justify-center">
-              <p>Are you sure you want to delete this cat?</p>
-            </div>
-            <div className="column-full flex justify-between">
-              <button
-                className="modal-button"
-                onClick={() => setIsDeleting(false)}>
-                Cancel
-              </button>
-              <button
-                className="modal-button red-background white-text"
-                onClick={handleDelete}>
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }
