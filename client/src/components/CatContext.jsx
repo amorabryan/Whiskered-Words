@@ -1,18 +1,12 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import AppContext from './AppContext';
 import { useNavigate } from 'react-router-dom';
-import {
-  readCats,
-  addCat,
-  updateCat,
-  readCurrentCat,
-} from '../components/data.js';
+import { readCats, addCat, updateCat } from '../components/data.js';
 
 export const CatContext = createContext();
 
 export function CatProvider({ children }) {
   const [cats, setCats] = useState([]);
-  const [cat, setCat] = useState();
   const [isCatsLoading, setIsCatsLoading] = useState(false);
   const [isUpdatingCatLoading, setIsUpdatingCatLoading] = useState(false);
   const [updateCatError, setUpdateCatError] = useState();
@@ -55,24 +49,24 @@ export function CatProvider({ children }) {
     }
   }
 
-  async function loadUpdatingCat(catId, token) {
-    try {
-      setIsUpdatingCatLoading(true);
-      const loadedCat = await readCurrentCat(catId, token);
-      setCat(loadedCat);
-    } catch (err) {
-      setCatsError(err);
-    } finally {
-      setIsUpdatingCatLoading(false);
-    }
-  }
+  // async function loadUpdatingCat(catId, token) {
+  //   try {
+  //     setIsUpdatingCatLoading(true);
+  //     const loadedCat = await readCurrentCat(catId, token);
+  //     setCat(loadedCat);
+  //   } catch (err) {
+  //     setCatsError(err);
+  //   } finally {
+  //     setIsUpdatingCatLoading(false);
+  //   }
+  // }
 
-  useEffect(() => {
-    if (user && catId) {
-      setCatsError(null);
-      loadUpdatingCat(catId, token);
-    }
-  }, [user, token, catId]);
+  // useEffect(() => {
+  //   if (user && catId) {
+  //     setCatsError(null);
+  //     loadUpdatingCat(catId, token);
+  //   }
+  // }, [user, token, catId]);
 
   async function handleUpdateCat(event, catId) {
     event.preventDefault();
@@ -89,10 +83,11 @@ export function CatProvider({ children }) {
   }
 
   const contextValue = {
-    cat,
     cats,
     isCatsLoading,
     isUpdatingCatLoading,
+    setIsUpdatingCatLoading,
+    setCatsError,
     catsError,
     addCatError,
     setAddCatError,
@@ -102,6 +97,7 @@ export function CatProvider({ children }) {
     handleUpdateCat,
     catId,
     setCatId,
+    loadCats,
   };
   return (
     <CatContext.Provider value={contextValue}>{children}</CatContext.Provider>

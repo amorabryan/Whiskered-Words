@@ -4,11 +4,10 @@ import AppContext from '../components/AppContext';
 import { CatContext } from '../components/CatContext';
 import { FaPencilAlt } from 'react-icons/fa';
 
-export function YourCats({ onCreate, onEdit }) {
+export function YourCats({ onCreate }) {
   const navigate = useNavigate();
   const { user } = useContext(AppContext);
-  const { cats, isCatsLoading, catsError, setCatId } = useContext(CatContext);
-
+  const { cats, isCatsLoading, catsError } = useContext(CatContext);
   useEffect(() => {
     if (!user) {
       navigate('/login');
@@ -40,32 +39,27 @@ export function YourCats({ onCreate, onEdit }) {
             <div className="flex w-full justify-center">
               <ul className="flex flex-col flex-wrap justify-center md:flex-row">
                 {cats.map((cat) => (
-                  <Cat
-                    key={cat.catId}
-                    cat={cat}
-                    onEdit={onEdit}
-                    setCatId={setCatId}
-                  />
+                  <div key={cat.catId}>
+                    <Cat cat={cat} />
+                  </div>
                 ))}
               </ul>
             </div>
           </div>
         ) : (
-          <div>No Cats</div>
+          <div>You don't have any cats registered.</div>
         )}
       </div>
     </>
   );
 }
 
-function Cat({ cat, setCatId }) {
+function Cat({ cat }) {
   const navigate = useNavigate();
   const { name, photoUrl, catId } = cat;
-
-  const handleEditClick = () => {
-    setCatId(catId);
+  async function handleEditClick() {
     navigate(`/updatecatentry/${catId}`);
-  };
+  }
 
   return (
     <li className="flex justify-center px-4 pb-8">
@@ -81,10 +75,7 @@ function Cat({ cat, setCatId }) {
           </h3>
         </div>
         <div className="pl-5">
-          <FaPencilAlt
-            className="fa-solid fa-pencil"
-            onClick={handleEditClick}
-          />
+          <FaPencilAlt className="cursor-pointer" onClick={handleEditClick} />
         </div>
       </div>
     </li>

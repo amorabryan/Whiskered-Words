@@ -1,39 +1,68 @@
 import { useContext, useEffect, useState } from 'react';
 import AppContext from '../components/AppContext';
 import { CatContext } from '../components/CatContext';
-import { useNavigate } from 'react-router-dom';
+import { readCurrentCat } from '../components/data';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export function UpdateCatEntry() {
+  const { catId } = useParams();
   const {
-    cat,
     handleUpdateCat,
     isUpdatingCatsLoading,
     updateCatError,
     setUpdateCatError,
-    catId,
   } = useContext(CatContext);
-  const [name, setName] = useState(cat?.name ?? '');
-  const [photoUrl, setPhotoUrl] = useState(cat?.photoUrl ?? '');
-  const [gender, setGender] = useState(cat?.gender ?? '');
-  const [ageYr, setAgeYr] = useState(cat?.ageYr ?? '');
-  const [ageMo, setAgeMo] = useState(cat?.ageMo ?? '');
-  const [breed, setBreed] = useState(cat?.breed ?? '');
-  const { user } = useContext(AppContext);
+  const [catError, setCatError] = useState();
+  const [name, setName] = useState();
+  const [photoUrl, setPhotoUrl] = useState();
+  const [gender, setGender] = useState();
+  const [ageYr, setAgeYr] = useState();
+  const [ageMo, setAgeMo] = useState();
+  const [breed, setBreed] = useState();
+  const { user, token } = useContext(AppContext);
+  const { setIsUpdatingCatLoading } = useContext(CatContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) {
       navigate('/login');
-    } else if (cat) {
-      setName(cat.name);
-      setPhotoUrl(cat.photoUrl);
-      setGender(cat.gender);
-      setAgeYr(cat.ageYr);
-      setAgeMo(cat.ageMo);
-      setBreed(cat.breed);
+    }
+    async function loadUpdatingCat() {
+      try {
+        setIsUpdatingCatLoading(true);
+        const loadedCat = await readCurrentCat(catId, token);
+
+        const {
+          name: currentName,
+          photoUrl: currentPhotoUrl,
+          gender: currentGender,
+          ageYr: currentAgeYr,
+          ageMo: currentAgeMo,
+          breed: currentBreed,
+        } = loadedCat;
+
+        setName(currentName);
+        setPhotoUrl(currentPhotoUrl);
+        setGender(currentGender);
+        setAgeYr(currentAgeYr);
+        setAgeMo(currentAgeMo);
+        setBreed(currentBreed);
+      } catch (err) {
+        setCatError(err);
+      } finally {
+        setIsUpdatingCatLoading(false);
+      }
     }
     setUpdateCatError(null);
-  }, [user, navigate, setUpdateCatError, cat]);
+    loadUpdatingCat();
+  }, [
+    user,
+    navigate,
+    token,
+    setIsUpdatingCatLoading,
+    setUpdateCatError,
+    catId,
+  ]);
 
   // async function handleDelete() {
   //   try {
@@ -48,7 +77,10 @@ export function UpdateCatEntry() {
   // }
 
   if (isUpdatingCatsLoading) return <div>Loading...</div>;
-
+  if (catError)
+    return (
+      <div className="m-24">Error loading entries: {catError.message}</div>
+    );
   return (
     <div className="container mt-24">
       <div className="flex flex-wrap items-center justify-center">

@@ -1,6 +1,8 @@
 import Carousel from './Carousel';
 import './Global.css';
 import { Link } from 'react-router-dom';
+import AppContext from '../components/AppContext';
+import { useContext } from 'react';
 
 const images = [
   {
@@ -45,6 +47,8 @@ export function LandingPage() {
 }
 
 function StarterCard() {
+  const { user } = useContext(AppContext);
+
   return (
     <div className="row-one relative">
       <div className="relative">
@@ -60,11 +64,19 @@ function StarterCard() {
         <p className="text-lg">
           Create an online journal for your mighty moggies
         </p>
-        <Link to="/register">
-          <button className="mt-4 rounded bg-stone-400 px-6 py-2 text-stone-200 hover:bg-stone-500">
-            Start Here
-          </button>
-        </Link>
+        {!user ? (
+          <Link to="/register">
+            <button className="mt-4 rounded bg-stone-400 px-6 py-2 text-stone-200 hover:bg-stone-500">
+              Start Here
+            </button>
+          </Link>
+        ) : (
+          <Link to="/yourcats">
+            <button className="mt-4 rounded bg-stone-400 px-6 py-2 text-stone-200 hover:bg-stone-500">
+              See Your Cats
+            </button>
+          </Link>
+        )}
       </div>
     </div>
   );
