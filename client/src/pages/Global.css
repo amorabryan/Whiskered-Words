@@ -9,3 +9,7 @@
 .fa-dot {
   padding: 0 0.5rem;
 }
+
+.fade-modal {
+  background-color: rgba(0, 0, 0, 0.5);
+}

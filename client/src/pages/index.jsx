@@ -4,3 +4,6 @@ export * from './LandingPage';
 export * from './Login';
 export * from './NotFound';
 export * from './Register';
+export * from './YourCats';
+export * from './CatEntry';
+export * from './UpdateCatEntry';

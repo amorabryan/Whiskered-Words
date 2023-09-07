@@ -1,6 +1,8 @@
 import Carousel from './Carousel';
 import './Global.css';
 import { Link } from 'react-router-dom';
+import AppContext from '../components/AppContext';
+import { useContext } from 'react';
 
 const images = [
   {
@@ -36,15 +38,17 @@ export function LandingPage() {
       <div className="w-full">
         <StarterCard />
       </div>
-      <div className="carousel-container w-full md:flex">
-        <Carousel images={images} />
+      <div className="carousel-container w-full justify-evenly md:flex">
         <Info />
+        <Carousel images={images} />
       </div>
     </>
   );
 }
 
 function StarterCard() {
+  const { user } = useContext(AppContext);
+
   return (
     <div className="row-one relative">
       <div className="relative">
@@ -55,16 +59,24 @@ function StarterCard() {
         />
         <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-b from-transparent to-black opacity-60"></div>
       </div>
-      <div className="bgimage-text bg-yellow-900 p-9 text-left text-stone-200 md:absolute md:left-1/2 md:top-1/2 md:bg-transparent">
+      <div className="bgimage-text bg-yellow-900 p-9 text-left text-stone-200 md:absolute md:right-48 md:top-1/2 md:bg-transparent">
         <h1 className="text-2xl font-bold">Welcome to Whiskered Words!</h1>
         <p className="text-lg">
           Create an online journal for your mighty moggies
         </p>
-        <Link to="/register">
-          <button className="mt-4 rounded bg-stone-400 px-6 py-2 text-stone-200 hover:bg-stone-500">
-            Start Here
-          </button>
-        </Link>
+        {!user ? (
+          <Link to="/register">
+            <button className="mt-4 rounded bg-stone-400 px-6 py-2 text-stone-200 hover:bg-stone-500">
+              Start Here
+            </button>
+          </Link>
+        ) : (
+          <Link to="/yourcats">
+            <button className="mt-4 rounded bg-stone-400 px-6 py-2 text-stone-200 hover:bg-stone-500">
+              See Your Cats
+            </button>
+          </Link>
+        )}
       </div>
     </div>
   );
