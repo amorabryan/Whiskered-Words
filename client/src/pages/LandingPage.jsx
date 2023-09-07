@@ -38,9 +38,9 @@ export function LandingPage() {
       <div className="w-full">
         <StarterCard />
       </div>
-      <div className="carousel-container w-full md:flex">
-        <Carousel images={images} />
+      <div className="carousel-container w-full justify-evenly md:flex">
         <Info />
+        <Carousel images={images} />
       </div>
     </>
   );
@@ -59,7 +59,7 @@ function StarterCard() {
         />
         <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-b from-transparent to-black opacity-60"></div>
       </div>
-      <div className="bgimage-text bg-yellow-900 p-9 text-left text-stone-200 md:absolute md:left-1/2 md:top-1/2 md:bg-transparent">
+      <div className="bgimage-text bg-yellow-900 p-9 text-left text-stone-200 md:absolute md:right-48 md:top-1/2 md:bg-transparent">
         <h1 className="text-2xl font-bold">Welcome to Whiskered Words!</h1>
         <p className="text-lg">
           Create an online journal for your mighty moggies

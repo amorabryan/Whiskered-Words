@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from 'react';
 import AppContext from '../components/AppContext';
 import { CatContext } from '../components/CatContext';
 import { readCurrentCat } from '../components/data';
-import { useNavigate, useParams } from 'react-router-dom';
-import { IoEnter } from 'react-icons/io5';
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import { IoEnter, IoBackspace } from 'react-icons/io5';
 
 export function UpdateCatEntry() {
   const { catId } = useParams();
@@ -79,15 +79,15 @@ export function UpdateCatEntry() {
         </div>
       </div>
       <form onSubmit={(event) => handleUpdateCat(event, catId)}>
-        <div className="mb-4 flex flex-wrap">
-          <div className="w-full md:w-1/2">
+        <div className="flex flex-wrap">
+          <div className="w-full px-2 md:w-1/2">
             <img
               className="form-image mx-auto mb-2 block max-w-xs rounded-md shadow-lg"
               src={photoUrl || '/images/placeholder-image-square.jpg'}
               alt="cat"
             />
             <label className="mb-4 block">
-              Photo URL
+              Photo URL:
               <input
                 required
                 className="mt-2 w-full rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
@@ -98,9 +98,9 @@ export function UpdateCatEntry() {
               />
             </label>
           </div>
-          <div className="w-full md:w-1/2">
+          <div className="w-full px-2 md:w-1/2">
             <label className="mb-4 block">
-              Your Cat's Name
+              Your Cat's Name:
               <input
                 required
                 className="mt-2 w-full rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
@@ -110,8 +110,8 @@ export function UpdateCatEntry() {
                 onChange={(e) => setName(e.target.value)}
               />
             </label>
-            <label>
-              Gender:
+            <label className="mb-4 block">
+              Gender: <br />
               <select
                 required
                 className="mt-2 w-1/2 rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
@@ -150,10 +150,10 @@ export function UpdateCatEntry() {
             </label>
           </div>
         </div>
-        <div className="mb-4 flex flex-wrap">
+        <div className="flex flex-wrap">
           <div className="column-full">
-            <label className="mb-4 block">
-              Breed <br />
+            <label className="mb-4 block px-2">
+              Breed: <br />
               <input
                 required
                 className="mt-2 w-1/2 rounded border border-gray-300 p-2 focus:border-orange-500 focus:outline-none"
@@ -162,7 +162,7 @@ export function UpdateCatEntry() {
                 value={breed || ''}
                 onChange={(e) => setBreed(e.target.value)}
               />
-              <div className="mt-2 flex flex-col text-center text-sm text-gray-600">
+              <div className="mt-2 text-center text-sm text-gray-600">
                 If you don't know your cat's breed, that's okay! Most cats are
                 mixed breed so select “Mixed/Unknown”. If entering in multiple
                 breeds, please use a comma ( , ) after each breed. Need help
@@ -171,7 +171,7 @@ export function UpdateCatEntry() {
                   href="https://www.purina.com/cats/cat-breeds"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-purple-700 hover:underline">
+                  className="text-orange-500 hover:underline">
                   https://www.purina.com/cats/cat-breeds
                 </a>{' '}
                 to see the breed names.
@@ -179,11 +179,20 @@ export function UpdateCatEntry() {
             </label>
           </div>
         </div>
-        <div className="flex flex-wrap">
-          <div className="mt-6 w-full text-center">
+        <div className="mb-4 flex flex-wrap justify-between">
+          <div>
+            <Link to="/yourcats">
+              <button
+                type="submit"
+                className="brown-background flex h-12 w-12 cursor-pointer items-center justify-center rounded-full">
+                <IoBackspace color={'#E7DDD2'} size={36} />
+              </button>
+            </Link>
+          </div>
+          <div className="column-full flex">
             <button
               type="submit"
-              className="brown-background flex h-12 w-12 cursor-pointer items-center justify-center rounded-full">
+              className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-orange-400">
               <IoEnter color={'#E7DDD2'} size={36} />
             </button>
           </div>

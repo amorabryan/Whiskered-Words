@@ -2,11 +2,9 @@ import React from 'react';
 
 export function DeleteCat({ onCancel, onConfirm }) {
   return (
-    <div
-      id="modalContainer"
-      className="modal-container align-center flex justify-center">
-      <div className="modal flex flex-wrap">
-        <div className="column-full flex justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-90">
+      <div className="flex flex-col rounded bg-white p-8 shadow-md">
+        <div className="column-full flex justify-center pb-4">
           <p>Are you sure you want to delete this cat?</p>
         </div>
         <div className="column-full flex justify-between">
@@ -14,7 +12,7 @@ export function DeleteCat({ onCancel, onConfirm }) {
             Cancel
           </button>
           <button
-            className="modal-button red-background white-text"
+            className="h-10 w-24 rounded bg-red-700 text-xl text-white"
             onClick={onConfirm}>
             Confirm
           </button>

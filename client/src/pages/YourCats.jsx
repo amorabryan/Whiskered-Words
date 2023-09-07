@@ -26,7 +26,7 @@ export function YourCats({ onCreate }) {
     <>
       <div className="cat-container mt-24">
         <div className="flex flex-wrap items-center justify-around pb-6">
-          <div className="px-10"></div>
+          <div className="px-16"></div>
           <h2 className="brown-text text-3xl text-gray-800">Your Cats</h2>
           <Link to="/catentry">
             <button
@@ -49,7 +49,7 @@ export function YourCats({ onCreate }) {
             </div>
           </div>
         ) : (
-          <div>You don't have any cats registered.</div>
+          <div className="text-center">You don't have any cats registered.</div>
         )}
       </div>
     </>
@@ -60,7 +60,7 @@ function Cat({ cat, onDelete }) {
   const navigate = useNavigate();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { name, photoUrl, catId } = cat;
+  const { name, photoUrl, catId, breed, gender, ageYr, ageMo } = cat;
 
   async function handleEditClick() {
     navigate(`/updatecatentry/${catId}`);
@@ -84,22 +84,30 @@ function Cat({ cat, onDelete }) {
     <li className="flex justify-center px-4 pb-8">
       <div className="cat-profile flex">
         <div className="flex flex-col items-center justify-center rounded-md bg-gradient-to-t from-orange-400">
+          <h2 className="pb-2 font-bold text-gray-600">{name}</h2>
           <img
             className="form-image mx-auto mb-2 block w-11/12 rounded-md"
             src={photoUrl}
             alt={name}
           />
-          <h3 className="pb-2 text-gray-600">
-            <strong>{name}</strong>
+          <h3 className="pb-2 text-sm font-semibold text-gray-600">{breed}</h3>
+          <h3 className="pb-2 text-sm font-semibold text-gray-600">
+            {ageYr} Years, {ageMo} Months
           </h3>
+          <h3 className="pb-2 text-sm font-semibold text-gray-600">{gender}</h3>
         </div>
         <div className="pl-5">
           <div className="mb-2">
-            <FaPencilAlt className="cursor-pointer" onClick={handleEditClick} />
+            <FaPencilAlt
+              className="cursor-pointer"
+              color={'#1d4ed8'}
+              onClick={handleEditClick}
+            />
           </div>
           <div className="mb-2">
             <FaTrashAlt
               className="cursor-pointer"
+              color={'#DC2626'}
               onClick={handleDeleteClick}
             />
           </div>
